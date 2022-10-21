@@ -61,7 +61,7 @@ def newAnalyzer():
     analyzer["dateIndex"] = om.newMap(omaptype="RBT",
                                       comparefunction=compareDates)
     analyzer["reporting_area"] = om.newMap(omaptype="RBT",
-                                      comparefunction=compareDates)
+                                      comparefunction=compareAreas)
     # TODO lab 9, crear el indice ordenado por areas reportadas
     return analyzer
 
@@ -241,7 +241,7 @@ def indexHeightAreas(analyzer):
     Altura del arbol por areas
     """
     # TODO lab 9, leer la altura del arbol por areas
-    pass
+    return om.height(analyzer["reporting_area"])
 
 
 def indexSizeAreas(analyzer):
@@ -249,7 +249,7 @@ def indexSizeAreas(analyzer):
     Numero de elementos en el indice por areas
     """
     # TODO lab 9, leer el numero de elementos en el indice por areas
-    pass
+    return om.size(analyzer["reporting_area"])
 
 
 def minKeyAreas(analyzer):
@@ -257,7 +257,7 @@ def minKeyAreas(analyzer):
     Llave mas pequena por areas
     """
     # TODO lab 9, leer la llave mas pequena por areas
-    pass
+    return om.minKey(analyzer["reporting_area"])
 
 
 def maxKeyAreas(analyzer):
@@ -265,7 +265,7 @@ def maxKeyAreas(analyzer):
     Llave mas grande por areas
     """
     # TODO lab 9, leer la llave mas grande por areas
-    pass
+    return om.maxKey(analyzer["reporting_area"])
 
 
 def getCrimesByRangeArea(analyzer, initialArea, FinalArea):
@@ -273,7 +273,10 @@ def getCrimesByRangeArea(analyzer, initialArea, FinalArea):
     Retorna el numero de crimenes en un rango de areas
     """
     # TODO lab 9, completar la consulta de crimenes por rango de areas
+    lst = om.values(analyzer["reporting_area"], initialArea, FinalArea)
     totalcrimes = 0
+    for lstdate in lt.iterator(lst):
+        totalcrimes += lt.size(lstdate["lstcrimes"])
     return totalcrimes
 
 
@@ -336,7 +339,12 @@ def compareAreas(area1, area2):
     Compara dos areas
     """
     # area = "REPORTING_AREA"
-    pass
+    if (area1 == area2):
+        return 0
+    elif (area1 > area2):
+        return 1
+    else:
+        return -1
 
 
 def compareOffenses(offense1, offense2):
