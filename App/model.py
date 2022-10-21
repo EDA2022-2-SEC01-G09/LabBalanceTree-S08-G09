@@ -58,7 +58,9 @@ def newAnalyzer():
                 }
 
     analyzer["crimes"] = lt.newList("SINGLE_LINKED", compareIds)
-    analyzer["dateIndex"] = om.newMap(omaptype="BST",
+    analyzer["dateIndex"] = om.newMap(omaptype="RBT",
+                                      comparefunction=compareDates)
+    analyzer["reporting_area"] = om.newMap(omaptype="RBT",
                                       comparefunction=compareDates)
     # TODO lab 9, crear el indice ordenado por areas reportadas
     return analyzer
@@ -73,6 +75,7 @@ def addCrime(analyzer, crime):
     """
     lt.addLast(analyzer["crimes"], crime)
     updateDateIndex(analyzer["dateIndex"], crime)
+    updateAreaIndex(analyzer["reporting_area"], crime)
     # TODO lab 9, actualizar el indice por areas reportadas
     return analyzer
 
@@ -85,12 +88,20 @@ def updateAreaIndex(map, crime):
     y si el area son ["", " ", None] se utiliza el valor por defecto 9999
     """
     # TODO lab 9, implementar actualizacion del indice por areas reportadas
+    occurredarea = crime["REPORTING_AREA"]
     # revisar si el area es un str vacio ["", " ", None]
     # area desconocida es 9999
-
+    if occurredarea == "" or occurredarea == " " or occurredarea == None:
+        occurredarea == 9999
     # revisar si el area ya esta en el indice
-
+    entry = om.get(map, occurredarea)
     # si el area ya esta en el indice, adicionar el crimen a la lista
+    if entry is None:
+        datentry = newDataEntry(crime)
+        om.put(map, occurredarea, datentry)
+    else:
+        datentry = me.getValue(entry)
+    addDateIndex(datentry, crime)
     return map
 
 
@@ -99,7 +110,12 @@ def newAreaEntry(crime):
     Crea una entrada para el indice de areas reportadas
     """
     # TODO lab 9, crear una entrada para el indice de areas reportadas
-    entry = {"lstcrimes": None, }
+    entry = {"reported_areas": None, "lstcrimes": None}
+    entry["reported_areas"] = m.newMap(numelements=30,
+                                     maptype="PROBING",
+                                     comparefunction=compareOffenses)
+    entry["lstcrimes"] = lt.newList("SINGLE_LINKED", compareDates)
+    lt.addLast(entry["lstcrimes"], crime)
     return entry
 
 
@@ -108,6 +124,7 @@ def addAreaIndex(areaentry, crime):
     Adiciona un crimen a la lista de crimenes de un area
     """
     # TODO lab 9, adicionar crimen a la lista de crimenes de un area
+    
     return areaentry
 
 
