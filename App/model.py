@@ -124,7 +124,7 @@ def addAreaIndex(areaentry, crime):
     Adiciona un crimen a la lista de crimenes de un area
     """
     # TODO lab 9, adicionar crimen a la lista de crimenes de un area
-    
+    lt.addLast(areaentry, crime)
     return areaentry
 
 
