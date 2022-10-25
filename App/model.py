@@ -54,7 +54,7 @@ def newAnalyzer():
     """
     analyzer = {"crimes": None,
                 "dateIndex": None,
-                "areaIndex": None,
+                "reporting_area": None,
                 }
 
     analyzer["crimes"] = lt.newList("SINGLE_LINKED", compareIds)
@@ -92,7 +92,7 @@ def updateAreaIndex(map, crime):
     # revisar si el area es un str vacio ["", " ", None]
     # area desconocida es 9999
     if occurredarea == "" or occurredarea == " " or occurredarea == None:
-        occurredarea == 9999
+        occurredarea = str(9999)
     # revisar si el area ya esta en el indice
     entry = om.get(map, occurredarea)
     # si el area ya esta en el indice, adicionar el crimen a la lista
@@ -114,7 +114,7 @@ def newAreaEntry(crime):
     entry["reported_areas"] = m.newMap(numelements=30,
                                      maptype="PROBING",
                                      comparefunction=compareOffenses)
-    entry["lstcrimes"] = lt.newList("SINGLE_LINKED", compareDates)
+    entry["lstcrimes"] = lt.newList("SINGLE_LINKED", compareAreas)
     lt.addLast(entry["lstcrimes"], crime)
     return entry
 
@@ -125,6 +125,7 @@ def addAreaIndex(areaentry, crime):
     """
     # TODO lab 9, adicionar crimen a la lista de crimenes de un area
     lt.addLast(areaentry, crime)
+    updateAreaIndex(areaentry, crime)
     return areaentry
 
 
@@ -272,8 +273,9 @@ def getCrimesByRangeArea(analyzer, initialArea, FinalArea):
     """
     Retorna el numero de crimenes en un rango de areas
     """
+    
     # TODO lab 9, completar la consulta de crimenes por rango de areas
-    lst = om.values(analyzer["reporting_area"], initialArea, FinalArea)
+    lst = om.values(analyzer["reporting_area"], (initialArea), (FinalArea))
     totalcrimes = 0
     for lstdate in lt.iterator(lst):
         totalcrimes += lt.size(lstdate["lstcrimes"])
@@ -339,6 +341,7 @@ def compareAreas(area1, area2):
     Compara dos areas
     """
     # area = "REPORTING_AREA"
+    
     if (area1 == area2):
         return 0
     elif (area1 > area2):
